@@ -308,7 +308,7 @@ class App:
 
         self.npcs = [
             NPC(15, 20, "Villager", ["Welcome to our large town!", "The desert island to the SW is hot,", "but the lava island to the SE is DEADLY!"], True, 0),
-            NPC(8, 5, "Elder", ["To defeat the Demon Lord in the lava region,", "you must train well in the snow mountains."], False, 1),
+            NPC(8, 5, "Elder", ["To defeat the Demon Lord in the lava region,", "you must traverse the cave to the east.", "I have unsealed the cave for you."], False, 1),
             NPC(25, 5, "Guard", ["The castle is to the north.", "Rest there to recover your HP and MP."], False, 2),
             NPC(14, 11, "Girl", ["I love the white snow in the north!", "Have you seen the Snow Ghost?"], True, 3),
             NPC(15, 25, "Merchant", ["I have no items to sell right now...", "But you can find treasures in the islands!"], False, 0)
@@ -316,6 +316,9 @@ class App:
         
         self.is_boss_battle = False
         self.title_frame = 0 # Animation counter for title
+        
+        # Quest Flags
+        self.has_spoken_to_elder = False
         
         # Menu state
 
@@ -336,6 +339,15 @@ class App:
         
         self.shake_amount = 0
         self.flash_timer = 0
+        
+        # Encounter Transition
+        self.transition_timer = 0
+        self.is_transitioning = False
+        self.transition_next_state = None
+        
+        # Level Up Effect
+        self.lvlup_timer = 0
+        self.lvlup_particles = []
         
         self.camera_x = 0
         self.camera_y = 0
@@ -601,6 +613,8 @@ class App:
         pyxel.sounds[3].set("e3g3c4", "s", "7", "v", 15)
         # 4: Treasure
         pyxel.sounds[4].set("c3e3g3c4", "p", "7", "v", 20)
+        # 5: Level Up (Triumphant fanfare)
+        pyxel.sounds[5].set("c3e3g3c4g3c4e4g4", "p", "7", "v", 30)
 
     def is_passable(self, tx, ty, m_type="field"):
         if m_type == "field":
@@ -616,7 +630,7 @@ class App:
     def start_boss_battle(self):
         self.current_monster = Monster("DEMON LORD", 500, 40, 30, 0, 0, "IMG_4318.PNG")
         self.is_boss_battle = True
-        self.state = STATE_BATTLE
+        self.start_transition(STATE_BATTLE)
         self.battle_phase = 0
         self.battle_messages = ["The ground shakes...", "DEMON LORD appears!"]
         self.character_commands = []
@@ -643,19 +657,19 @@ class App:
                 monsters.append(Monster("Cactus", 20, 10, 15, 15, 30, "IMG_4323.PNG"))
             elif tile == TILE_LAVA:
                 monsters = [
-                    Monster("FireSpirit", 40, 18, 10, 30, 50, "IMG_4325.PNG"),
-                    Monster("LavaGolem", 60, 22, 20, 50, 100, "IMG_4326.PNG"),
-                    Monster("RedDragon", 100, 30, 25, 200, 500, "IMG_4327.PNG")
+                    Monster("FireSpirit", 45, 20, 12, 40, 60, "IMG_4325.PNG"),
+                    Monster("LavaGolem", 70, 25, 25, 60, 120, "IMG_4326.PNG"),
+                    Monster("RedDragon", 120, 35, 30, 250, 600, "IMG_4327.PNG")
                 ]
             elif tile == TILE_SNOW:
                 monsters = [
-                    Monster("Yeti", 45, 20, 12, 40, 60, "IMG_4328.PNG"),
-                    Monster("IceWolf", 35, 15, 8, 25, 35, "IMG_4329.PNG"),
-                    Monster("SnowGhost", 25, 12, 30, 35, 45, "IMG_4330.PNG")
+                    Monster("Yeti", 50, 22, 15, 45, 65, "IMG_4328.PNG"),
+                    Monster("IceWolf", 40, 18, 10, 30, 45, "IMG_4329.PNG"),
+                    Monster("SnowGhost", 30, 15, 35, 40, 55, "IMG_4330.PNG")
                 ]
 
             self.current_monster = random.choice(monsters)
-            self.state = STATE_BATTLE
+            self.start_transition(STATE_BATTLE)
             self.battle_phase = 0
             self.battle_messages = [f"A wild {self.current_monster.name} appeared!"]
             self.character_commands = []
@@ -701,7 +715,48 @@ class App:
             except Exception as e:
                 print(f"Failed to play BGM {file_name} from {path}: {e}")
 
+    def start_transition(self, next_state):
+        self.is_transitioning = True
+        self.transition_timer = 20 # 20 frames for effect
+        self.transition_next_state = next_state
+        pyxel.play(3, 1) # Confirm sound for effect start
+
+    def update_transition(self):
+        if self.transition_timer > 0:
+            self.transition_timer -= 1
+            if self.transition_timer == 10:
+                # Mid-point: switch actual state
+                self.state = self.transition_next_state
+        else:
+            self.is_transitioning = False
+            self.transition_next_state = None
+
+
+    def start_lvlup_effect(self):
+        self.lvlup_timer = 60 # 2 seconds of shine
+        self.lvlup_particles = []
+        for _ in range(40):
+            self.lvlup_particles.append({
+                'x': random.randint(0, pyxel.width),
+                'y': random.randint(0, pyxel.height),
+                'spd': random.randint(1, 3),
+                'col': random.choice([7, 10, 14])
+            })
+        pyxel.play(3, 5)
+
     def update(self):
+        # Handle level up particles
+        if self.lvlup_timer > 0:
+            self.lvlup_timer -= 1
+            for p in self.lvlup_particles:
+                p['y'] -= p['spd']
+                if p['y'] < 0: p['y'] = pyxel.height
+
+        # Handle transitions with priority
+        if self.is_transitioning:
+            self.update_transition()
+            return
+
         # Update BGM on state change
         if not hasattr(self, 'last_state'):
             self.last_state = None
@@ -824,12 +879,15 @@ class App:
                     if tile == TILE_CAVE:
                         # Cave Warp Logic
                         # Cave A (Mainland): (53, 97) -> Cave B (Boss Island): (53, 101)
-                        if self.px == 53 and self.py == 97:
-                            self.px, self.py = 53, 101
-                            self.show_dialog(["Traversed the dark cave..."])
-                        elif self.px == 53 and self.py == 101:
-                            self.px, self.py = 53, 97
-                            self.show_dialog(["Returned to the mainland."])
+                        if self.has_spoken_to_elder:
+                            if self.px == 53 and self.py == 97:
+                                self.px, self.py = 53, 101
+                                self.show_dialog(["Traversed the dark cave..."])
+                            elif self.px == 53 and self.py == 101:
+                                self.px, self.py = 53, 97
+                                self.show_dialog(["Returned to the mainland."])
+                        else:
+                            self.show_dialog(["The cave entrance is sealed by a", "mysterious power...", "Only the Elder knows the secret."])
                         return
 
                     if tile == TILE_CASTLE:
@@ -948,6 +1006,8 @@ class App:
         self.dialog_text = messages
         self.is_dialog_active = True
         self.active_npc = npc
+        if npc and npc.name == "Elder":
+            self.has_spoken_to_elder = True
 
     def update_menu(self):
         if self.menu_mode == "main":
@@ -1128,7 +1188,9 @@ class App:
                     c.exp += self.current_monster.exp_yield
                     if c.update_stats():
                         lvl_up = True
-            if lvl_up: self.battle_messages.append("Someone leveled up!")
+            if lvl_up:
+                self.battle_messages.append("Someone leveled up!")
+                self.start_lvlup_effect()
             self.party[0].gold += self.current_monster.gold_yield
             self.battle_phase = 3
             return
@@ -1233,10 +1295,10 @@ class App:
         elif self.battle_phase == 3:
             if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                 if self.is_boss_battle:
-                    self.state = STATE_GAMECLEAR
+                    self.start_transition(STATE_GAMECLEAR)
                     self.is_boss_battle = False
                 else:
-                    self.state = STATE_FIELD
+                    self.start_transition(STATE_FIELD)
                 self.current_monster = None
 
     def draw_custom_title(self, x, y):
@@ -1259,7 +1321,21 @@ class App:
         if step >= 8: pyxel.blt(x + 72, y, 1, 48, 0, 16, 16, 0) # G
 
     def draw(self):
+        # Handle transition effects (fade to white/black)
+        if self.is_transitioning:
+            # Simple flash effect
+            flash_col = 7 if self.transition_timer > 10 else 0
+            pyxel.cls(flash_col)
+            return
+
         pyxel.cls(0)
+        
+        # Level Up Visual Effect Overlay
+        if self.lvlup_timer > 0:
+            for p in self.lvlup_particles:
+                pyxel.pset(p['x'], p['y'], p['col'])
+                if random.random() < 0.3:
+                    pyxel.pset(p['x'] + 1, p['y'], 7)
         
         if self.state == STATE_TITLE:
             self.draw_custom_title(81, 100)
