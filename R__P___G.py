@@ -11,6 +11,7 @@ STATE_GAMEOVER = 5
 STATE_GAMECLEAR = 6
 
 # Tile Types
+TILE_SIZE = 8 # Reverted to 8 for stability, but we can still draw 32x32 sprites on it
 TILE_GRASS = 0
 TILE_FOREST = 1
 TILE_MOUNTAIN = 2
@@ -26,101 +27,119 @@ TILE_SNOW = 11
 TILE_CHEST_CLOSED = 12
 TILE_CHEST_OPEN = 13
 TILE_NPC = 14
-TILE_BOSS = 15 # Added Boss Tile
+TILE_BOSS = 15
+TILE_CAVE = 16 # New Cave Tile
 
-# Map Data - Expanded World Map
-# 0:Grass, 1:Forest, 2:Mountain, 3:Water, 4:Castle, 5:Town, 8:Bridge, 9:Sand, L:Lava, S:Snow, B:Boss
+# Map Data - Redesigned Land-based World Map (No Sea)
+# 0:Grass, 1:Forest, 2:Mountain, 3:Water(Removed), 4:Castle, 5:Town, 8:Bridge, 9:Sand, L:Lava, S:Snow, B:Boss, C:Cave
 FIELD_MAP = [
-    "3333333333333333333333333333333333333333333333333333333333333333",
-    "33SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS33",
-    "33SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS33",
-    "33SSSSSS22222222SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS33",
-    "33SSSSSS2SSSSSS22SSSSSSSSSSSSS222222SSSSSSSSSSSSSSSSSSSSSSSSSS33",
-    "33SSSSSS2SS5SSS122SSSSSSSSSSS22111122SSSSSSSSSSSSSSSSSSSSSSSSS33",
-    "33SSSSSS2SSSSSS1122SSSSSSSSS2211111122SSSSSSSSSSSSSSSSSSSSSSSS33",
-    "33SSSSSS222222211122SSSSSSS221111111122SSSSSSSSSSSSSSSSSSSSSSS33",
-    "33SSSSSSSSS1111111122SSSSS22111111111122SSSSSSSSSSSSSSSSSSSSSS33",
-    "33SSSSSSSSSS1111111122SSS2211111111111122SSSSSSSSSSSSSSSSSSSSS33",
-    "33333333333321111111122S2211111111111111223333333333333333333333",
-    "3333333333322111111111222211111111111111122333333333333333333333",
-    "3333333333221111111111122111111111111111112233333333333333333333",
-    "3333333332211111111111111111111111111111111223333333333333333333",
-    "3333333322111111111111111111111111111111111122333333333333333333",
-    "3333333221111111111111111111111111111111111112233333333333333333",
-    "3333332211111111111111000000001111111111111111223333333333333333",
-    "3333322111111111111110000000000111111111111111122333333333333333",
-    "3333221111111111111100000000000011111111111111111223333333333333",
-    "3332211111111111111100000088880001111111111111111223333333333333",
-    "3322111111111111111000088888888000111111111111111122333333333333",
-    "3321111111111111111000088888888000111111111111111112233333333333",
-    "3221111111111111111000000088880000111111111111111111223333333333",
-    "3211111111111111111000000000000001111111111111111111122333333333",
-    "3211111111111111111100000000000011111111111111111111112333333333",
-    "3211111111111111111110000000000111111111111111111111112333333333",
-    "3221111111111111111111111111111111111111111111111111122333333333",
-    "3322111111111111111111111111111111111111111111111111223333333333",
-    "3332211111111111111111111111111111111111111111111112233333333333",
-    "3333221111111111111111111111111111111111111111111122333333333333",
-    "3333322211111111111111111111111111111111111111112223333333333333",
-    "3333333222211111111111111111111111111111111112222333333333333333",
-    "3333333333222221111111111111111111111111122222333333333333333333",
-    "3333333333333322222211111111111111112222223333333333333333333333",
-    "3333333333333333333222211111111112222333333333333333333333333333",
-    "3333333333333333333333220000000022333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333333333333333333333330088880033333333333333333333333333333333",
-    "3333338888888888888888880088880088888888888888880088880033333333",
-    "3333399999993333333333330088880033333333333333330088880033333333",
-    "33339999119993333333333300888800333333333333333LLLLLL33333333333",
-    "3333999915199933333333330088880033333333333333LLLLLLL33333333333",
-    "333399991199933333333333008888003333333333333LLLLLLLL33333333333",
-    "33333999999933333333333333000033333333333333LLLL4LLL333333333333",
-    "33333399999333333333333333333333333333333333LLLLLLL333333333333",
-    "333333333333333333333333333333333333333333333LLLLLB333333333333",
-    "3333333333333333333333333333333333333333333333333333333333333333",
-    "3333333333333333333333333333333333333333333333333333333333333333",
-    "3333333333333333333333333333333333333333333333388888888883333333",
-    "333333333333333333333333333333333333333333333338LLLLLB3333333333",
-    "333333333333333333333333333333333333333333333338LLLLLL3333333333",
+    "2222222222222222222222222222222222222222222222222222222222222222",
+    "2SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS2",
+    "2SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS2",
+    "2SSSSSS22222222SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS2",
+    "2SSSSSS2SSSSSS22SSSSSSSSSSSSS222222SSSSSSSSSSSSSSSSSSSSSSSSSSSS2",
+    "2SSSSSS2SS5SSS122SSSSSSSSSSS22111122SSSSSSSSSSSSSSSSSSSSSSSSSSS2",
+    "2SSSSSS2SSSSSS1122SSSSSSSSS2211111122SSSSSSSSSSSSSSSSSSSSSSSSSS2",
+    "2SSSSSS222222211122SSSSSSS221111111122SSSSSSSSSSSSSSSSSSSSSSSSS2",
+    "2SSSSSSSSS1111111122SSSSS22111111111122SSSSSSSSSSSSSSSSSSSSSSSS2",
+    "2SSSSSSSSSS1111111122SSS2211111111111122SSSSSSSSSSSSSSSSSSSSSSS2",
+    "22222222222221111111122S2211111111111111222222222222222222222222",
+    "2222222222222211111111122221111111111111112222222222222222222222",
+    "2222222222221111111111112211111111111111111122222222222222222222",
+    "2222222222211111111111111111111111111111111112222222222222222222",
+    "2222222222111111111111111111111111111111111111222222222222222222",
+    "2222222221111111111111111111111111111111111111122222222222222222",
+    "2222222211111111111111000000001111111111111111112222222222222222",
+    "2222222111111111111110000000000111111111111111111222222222222222",
+    "2222221111111111111100000000000011111111111111111122222222222222",
+    "2222211111111111111100000011110001111111111111111122222222222222",
+    "2222111111111111111000011111111000111111111111111112222222222222",
+    "2221111111111111111000011111111000111111111111111111222222222222",
+    "2221111111111111111000000011110000111111111111111111122222222222",
+    "2211111111111111111000000000000001111111111111111111112222222222",
+    "2211111111111111111100000000000011111111111111111111111222222222",
+    "2211111111111111111110000000000111111111111111111111111222222222",
+    "2221111111111111111111111111111111111111111111111111112222222222",
+    "2222111111111111111111111111111111111111111111111111122222222222",
+    "2222211111111111111111111111111111111111111111111111222222222222",
+    "2222221111111111111111111111111111111111111111111112222222222222",
+    "2222222211111111111111111111111111111111111111111222222222222222",
+    "2222222222111111111111111111111111111111111111222222222222222222",
+    "2222222222222111111111111111111111111111111222222222222222222222",
+    "2222222222222222211111111111111111111111222222222222222222222222",
+    "2222222222222222222221111111111112222222222222222222222222222222",
+    "2222222222222222222222200000000222222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222222222222222222222220011110022222222222222222222222222222222",
+    "2222221111111111111111110011110011111111111111110011110022222222",
+    "2222299999992222222222220011110022222222222222220011110022222222",
+    "22229999119992222222222200111100222222222222222LLLLLL22222222222",
+    "2222999915199922222222220011110022222222222222LLLLLLL22222222222",
+    "222299991199922222222222001111002222222222222LLLLLLLL22222222222",
+    "22222999999922222222222222000022222222222222LLLL4LLL222222222222",
+    "22222299999222222222222222222222222222222222LLLLLLL222222222222",
+    "222222222222222222222222222222222222222222222LLLLLC222222222222",
+    "2222222222222222222222222222222222222222222222222222222222222222",
+    "2222222222222222222222222222222222222222222222222222222222222222",
+    "2222222222222222222222222222222222222222222222211111111112222222",
+    "222222222222222222222222222222222222222222222221LLLLLC2222222222",
+    "222222222222222222222222222222222222222222222221LLLLLL2222222222",
 ]
 
 MAP_WIDTH = len(FIELD_MAP[0])
 MAP_HEIGHT = len(FIELD_MAP)
 
-# Town Map Data (16x16)
+# Town Map Data (Expanded to 32x32 for Full Screen 256x256)
+# 0:Grass, 6:Floor, 7:Wall
 TOWN_MAP = [
-    "7777777777777777",
-    "7666766667666667",
-    "7666766667666667",
-    "7666666666666667",
-    "7666666666666667",
-    "7666667776666667",
-    "7666667676666667",
-    "7666667676666667",
-    "7776777777776777",
-    "0076700000076700",
-    "0076700000076700",
-    "0076777777776700",
-    "0076666666666700",
-    "0077777667777700",
-    "0000000660000000",
-    "0000000660000000",
+    "77777777777777777777777777777777",
+    "76666666666666666666666666666667",
+    "76666666666666666666666666666667",
+    "76667777766666666666667777766667",
+    "76667666766666666666667666766667",
+    "76667666766666666666667666766667",
+    "76667767766666666666667767766667",
+    "76666666666666666666666666666667",
+    "76666666666666666666666666666667",
+    "76666666666677777666666666666667",
+    "76666666666676667666666666666667",
+    "76666666666676667666666666666667",
+    "76666666666677677666666666666667",
+    "76666666666666666666666666666667",
+    "76666666666666666666666666666667",
+    "77777776677777777777777667777777",
+    "00000076670000000000007667000000",
+    "00000076670000000000007667000000",
+    "00000076670000000000007667000000",
+    "00000076677777777777777667000000",
+    "00000076666666666666666667000000",
+    "00000076666666666666666667000000",
+    "00000077777777766777777777000000",
+    "00000000000000766700000000000000",
+    "00000000000000766700000000000000",
+    "00000000000000766700000000000000",
+    "00000000000000766700000000000000",
+    "00000000000000766700000000000000",
+    "00000000000000766700000000000000",
+    "00000000000000766700000000000000",
+    "00000000000000766700000000000000",
+    "00000000000000766700000000000000",
 ]
 TOWN_WIDTH = len(TOWN_MAP[0])
 TOWN_HEIGHT = len(TOWN_MAP)
@@ -168,7 +187,7 @@ class Character:
         return False
 
 class Monster:
-    def __init__(self, name, hp, attack, defense, exp_yield, gold_yield):
+    def __init__(self, name, hp, attack, defense, exp_yield, gold_yield, img_file=None):
         self.name = name
         self.max_hp = hp
         self.hp = hp
@@ -176,6 +195,7 @@ class Monster:
         self.defense = defense
         self.exp_yield = exp_yield
         self.gold_yield = gold_yield
+        self.img_file = img_file
 
 class Item:
     def __init__(self, name, effect_type, power, amount=0):
@@ -201,6 +221,7 @@ class NPC:
         self.is_moving = is_moving
         self.move_timer = 0
         self.face_id = face_id # 0: Blue, 1: Red, 2: Green...
+        self.facing = 0 # 0: down, 1: up, 2: left, 3: right
 
     def update(self, app):
         if not self.is_moving:
@@ -211,6 +232,12 @@ class NPC:
             self.move_timer = 0
             dx, dy = random.choice([(0, 1), (0, -1), (1, 0), (-1, 0), (0, 0)])
             nx, ny = self.x + dx, self.y + dy
+            
+            # Update facing based on move
+            if dx == 0 and dy == 1: self.facing = 0
+            elif dx == 0 and dy == -1: self.facing = 1
+            elif dx == -1 and dy == 0: self.facing = 2
+            elif dx == 1 and dy == 0: self.facing = 3
             
             # Check collision with walls, player, and other NPCs
             if app.is_passable(nx, ny, "town"):
@@ -248,15 +275,15 @@ class App:
         self.acquisition_timer = 0 # Frames to show the notification
 
         # Town coordinates
-        self.tx = 7
-        self.ty = 14
+        self.tx = 15
+        self.ty = 30
         
         self.facing = 0 # 0: down, 1: up, 2: left, 3: right
         
         self.party = [
-            Character("Yusha", 30, 0, 10, 5, 8),
-            Character("Saru", 25, 15, 7, 4, 10, [SPELL_FIRE]),
-            Character("Mimi", 18, 25, 4, 3, 12, [SPELL_HEAL])
+            Character("Zany(Hero)", 30, 0, 10, 5, 8),
+            Character("Kozu(Mage)", 25, 15, 7, 4, 10, [SPELL_FIRE]),
+            Character("Luna(Priest)", 18, 25, 4, 3, 12, [SPELL_HEAL])
         ]
         
         self.inventory = [
@@ -275,16 +302,16 @@ class App:
         
         # Town Chests
         self.town_chests = [
-             Chest(1, 1, Item("Herb", "heal_hp", 30, 1)), # Town corner
-             Chest(14, 1, Item("MagicWater", "heal_mp", 15, 1)), # Another corner
+             Chest(2, 2, Item("Herb", "heal_hp", 30, 1)), # Town corner
+             Chest(29, 2, Item("MagicWater", "heal_mp", 15, 1)), # Another corner
         ]
 
         self.npcs = [
-            NPC(8, 6, "Villager", ["Welcome to our town!", "The desert island to the SW is hot,", "but the lava island to the SE is DEADLY!"], True, 0),
-            NPC(13, 2, "Elder", ["To defeat the Demon Lord in the lava region,", "you must train well in the snow mountains."], False, 1),
-            NPC(3, 3, "Guard", ["The castle is to the north.", "Rest there to recover your HP and MP."], False, 2),
-            NPC(12, 12, "Girl", ["I love the white snow in the north!", "Have you seen the Snow Ghost?"], True, 3),
-            NPC(5, 10, "Merchant", ["I have no items to sell right now...", "But you can find treasures in the islands!"], False, 0)
+            NPC(15, 20, "Villager", ["Welcome to our large town!", "The desert island to the SW is hot,", "but the lava island to the SE is DEADLY!"], True, 0),
+            NPC(8, 5, "Elder", ["To defeat the Demon Lord in the lava region,", "you must train well in the snow mountains."], False, 1),
+            NPC(25, 5, "Guard", ["The castle is to the north.", "Rest there to recover your HP and MP."], False, 2),
+            NPC(14, 11, "Girl", ["I love the white snow in the north!", "Have you seen the Snow Ghost?"], True, 3),
+            NPC(15, 25, "Merchant", ["I have no items to sell right now...", "But you can find treasures in the islands!"], False, 0)
         ]
         
         self.is_boss_battle = False
@@ -306,6 +333,9 @@ class App:
         self.battle_cursor = 0
         self.active_character_idx = 0
         self.character_commands = []
+        
+        self.shake_amount = 0
+        self.flash_timer = 0
         
         self.camera_x = 0
         self.camera_y = 0
@@ -345,53 +375,74 @@ class App:
 
         
     def create_graphics(self):
-        # 0: Grass
+        # 0: Grass (Lush with small flower dots)
         pyxel.images[0].rect(0, 0, 8, 8, 3) 
-        pyxel.images[0].pset(1, 1, 11)
-        pyxel.images[0].pset(5, 4, 11)
-        # 1: Forest
+        pyxel.images[0].pset(1, 1, 11); pyxel.images[0].pset(5, 4, 11)
+        pyxel.images[0].pset(2, 6, 14) # A tiny pink flower dot
+        
+        # 1: Forest (Layered trees)
         pyxel.images[0].rect(8, 0, 8, 8, 3)
-        pyxel.images[0].circ(11, 4, 3, 11)
-        pyxel.images[0].pset(11, 4, 3)
-        # 2: Mountain
-        pyxel.images[0].rect(16, 0, 8, 8, 4)
-        pyxel.images[0].tri(16, 8, 20, 0, 24, 8, 13)
-        # 3: Water
+        pyxel.images[0].circ(11, 3, 3, 11)
+        pyxel.images[0].circ(11, 5, 2, 3)
+        pyxel.images[0].line(11, 5, 11, 7, 4) # Trunk
+        
+        # 2: Mountain (Rocky cliff/crag style)
+        pyxel.images[0].rect(16, 0, 8, 8, 4) # Dark Brown/Grey base
+        # Draw some irregular rocky shapes
+        pyxel.images[0].line(16, 2, 19, 0, 13); pyxel.images[0].line(19, 0, 23, 4, 13) # Jagged top
+        pyxel.images[0].line(16, 5, 20, 3, 13); pyxel.images[0].line(20, 3, 23, 7, 13) # Middle crack
+        pyxel.images[0].pset(18, 2, 7); pyxel.images[0].pset(21, 5, 7) # Highlights
+        pyxel.images[0].line(16, 7, 23, 7, 0) # Bottom shadow
+        
+        # 3: Water (Animated-style waves)
         pyxel.images[0].rect(24, 0, 8, 8, 1)
-        pyxel.images[0].line(24, 2, 31, 2, 5)
-        pyxel.images[0].line(24, 6, 31, 6, 5)
-        # 4: Castle
+        pyxel.images[0].line(24, 2, 26, 2, 12); pyxel.images[0].line(28, 5, 30, 5, 12)
+        
+        # 4: Castle (Stone walls and blue roof)
         pyxel.images[0].rect(32, 0, 8, 8, 3)
-        pyxel.images[0].rect(33, 1, 6, 7, 7)
-        pyxel.images[0].rect(34, 4, 4, 4, 0)
-        # 5: Town
+        pyxel.images[0].rect(33, 2, 6, 6, 13) # Stone base
+        pyxel.images[0].rect(34, 4, 4, 4, 7)  # Gate area
+        pyxel.images[0].tri(32, 2, 36, 0, 40, 2, 12) # Blue Roof
+        
+        # 5: Town (Quaint cottage style)
         pyxel.images[0].rect(40, 0, 8, 8, 3)
-        pyxel.images[0].rect(41, 3, 6, 5, 8)
-        pyxel.images[0].tri(40, 3, 44, 0, 48, 3, 8)
-        # 6: Town Floor
-        pyxel.images[0].rect(48, 0, 8, 8, 9)
-        pyxel.images[0].pset(49, 1, 4)
-        pyxel.images[0].pset(53, 5, 4)
-        # 7: Town Wall
-        pyxel.images[0].rect(56, 0, 8, 8, 13)
-        pyxel.images[0].line(56, 3, 63, 3, 0)
-        pyxel.images[0].line(56, 7, 63, 7, 0)
-        # 8: Bridge
-        pyxel.images[0].rect(64, 0, 8, 8, 6)
-        pyxel.images[0].rect(64, 2, 8, 1, 5)
-        pyxel.images[0].rect(64, 5, 8, 1, 5)
-        # 9: Sand (Desert)
+        pyxel.images[0].rect(41, 4, 6, 4, 15) # White walls
+        pyxel.images[0].tri(40, 4, 44, 1, 48, 4, 8)  # Red Roof
+        pyxel.images[0].rect(43, 6, 2, 2, 4)  # Small door
+        
+        # 6: Town Floor (Clean simple floor for character visibility)
+        # Using Color 9 (Light Brown/Beige) - Good contrast for both Red(8) and Blue(12)
+        pyxel.images[0].rect(48, 0, 8, 8, 9) 
+        pyxel.images[0].pset(48, 0, 4); pyxel.images[0].pset(55, 7, 4) # Minimal corner dots
+
+        
+        # 7: Town Wall (Bricks)
+        pyxel.images[0].rect(56, 0, 8, 8, 4)
+        pyxel.images[0].line(56, 3, 63, 3, 0); pyxel.images[0].line(56, 7, 63, 7, 0)
+        pyxel.images[0].line(59, 0, 59, 3, 0); pyxel.images[0].line(61, 4, 61, 7, 0)
+        
+        # 8: Bridge (Wooden planks)
+        pyxel.images[0].rect(64, 0, 8, 8, 4) # Dark wood base
+        pyxel.images[0].rect(64, 1, 8, 6, 9) # Lighter wood
+        for i in range(65, 72, 2): pyxel.images[0].line(i, 1, i, 6, 4)
+        
+        # 9: Sand (Dunes with shadows)
         pyxel.images[0].rect(72, 0, 8, 8, 10)
-        pyxel.images[0].pset(73, 2, 9)
-        pyxel.images[0].pset(76, 5, 9)
-        # 10: Lava
+        pyxel.images[0].line(72, 3, 75, 5, 9); pyxel.images[0].line(76, 2, 79, 4, 9)
+        
+        # 10: Lava (Glowing with bubbles)
         pyxel.images[0].rect(80, 0, 8, 8, 8)
-        pyxel.images[0].line(80, 2, 87, 2, 2)
-        pyxel.images[0].line(80, 6, 87, 6, 2)
-        # 11: Snow
+        pyxel.images[0].circ(82, 3, 1, 10); pyxel.images[0].circ(85, 6, 1, 2)
+        
+        # 11: Snow (Sparkling white)
         pyxel.images[0].rect(88, 0, 8, 8, 7)
-        pyxel.images[0].pset(89, 1, 13)
-        pyxel.images[0].pset(93, 5, 13)
+        pyxel.images[0].pset(89, 2, 15); pyxel.images[0].pset(93, 6, 15)
+        pyxel.images[0].pset(91, 4, 13)
+
+        # 16: Cave (Dark entrance)
+        pyxel.images[0].rect(128, 0, 8, 8, 4) # Mountain-like base
+        pyxel.images[0].rect(130, 3, 4, 5, 0) # Dark hole
+        pyxel.images[0].circ(132, 3, 2, 0)    # Rounded top of hole
         # 12: Treasure Chest (Closed)
         pyxel.images[0].rect(96, 0, 8, 8, 0)
         pyxel.images[0].rect(97, 2, 6, 5, 9) # Brown box
@@ -400,90 +451,114 @@ class App:
         # 13: Treasure Chest (Open)
         pyxel.images[0].rect(104, 0, 8, 8, 0)
         pyxel.images[0].rect(105, 4, 6, 3, 9)
-        # 14: NPC (Blue Outfit)
+        # 14: NPC (Original Simple Style)
         pyxel.images[0].rect(112, 0, 8, 8, 0)
         pyxel.images[0].rect(114, 1, 4, 3, 15) # Face
         pyxel.images[0].rect(114, 4, 4, 4, 12) # Blue body
         
-        # Face Portraits (Bank 2, 0, 0)
-        # 0: Blue Villager
-        pyxel.images[2].rect(0, 0, 32, 32, 0)
-        pyxel.images[2].rect(4, 4, 24, 24, 12) # Blue hood
-        pyxel.images[2].rect(8, 8, 16, 16, 15) # Face
-        pyxel.images[2].pset(12, 14, 0); pyxel.images[2].pset(20, 14, 0) # Eyes
-        # 1: Red Elder
-        pyxel.images[2].rect(32, 0, 32, 32, 0)
-        pyxel.images[2].rect(36, 4, 24, 24, 8) # Red hood
-        pyxel.images[2].rect(40, 8, 16, 16, 15) # Face
-        pyxel.images[2].rect(42, 20, 12, 4, 7) # Beard
-        # 2: Green Guard
-        pyxel.images[2].rect(64, 0, 32, 32, 0)
-        pyxel.images[2].rect(68, 4, 24, 24, 3) # Green helmet
-        pyxel.images[2].rect(72, 8, 16, 16, 15) # Face
-        pyxel.images[2].rect(72, 4, 16, 6, 13) # Steel visor
-        # 3: Pink Girl
-        pyxel.images[2].rect(96, 0, 32, 32, 0)
-        pyxel.images[2].rect(100, 4, 24, 24, 14) # Pink hair
-        pyxel.images[2].rect(104, 8, 16, 16, 15) # Face
-        pyxel.images[2].pset(108, 14, 0); pyxel.images[2].pset(116, 14, 0) # Eyes
+        # Player Graphics (8x8) - 4 Directions in Bank 0, Y=8
         
-        # Player (offset Y=8)
+        # 0: Down (Front) - Two blue eyes centered (shifted 1px left as requested)
         pyxel.images[0].rect(0, 8, 8, 8, 0)
-        pyxel.images[0].rect(2, 9, 4, 3, 14)
-        pyxel.images[0].rect(2, 12, 4, 4, 8)
+        pyxel.images[0].rect(2, 9, 4, 3, 15) # Face (White)
+        pyxel.images[0].rect(2, 12, 4, 4, 8)  # Body (Red)
+        pyxel.images[0].pset(2, 10, 12); pyxel.images[0].pset(4, 10, 12) # Two blue eyes
         
-        # Monsters (Start at Y=24, X=0 in Image Bank 0)
-        # Using 24x24 area for higher quality
-        # Slime (0, 24)
-        pyxel.images[0].rect(0, 24, 24, 24, 0)
-        pyxel.images[0].circ(12, 40, 7, 12); pyxel.images[0].rect(5, 40, 14, 8, 12) # Body
-        pyxel.images[0].pset(10, 38, 7); pyxel.images[0].pset(14, 38, 7) # Eyes
-        # Bat (24, 24)
-        pyxel.images[0].rect(24, 24, 24, 24, 0)
-        pyxel.images[0].circ(36, 36, 4, 13) # Body
-        pyxel.images[0].tri(24, 32, 32, 36, 32, 40, 5); pyxel.images[0].tri(48, 32, 40, 36, 40, 40, 5) # Wings
-        pyxel.images[0].pset(34, 35, 8); pyxel.images[0].pset(38, 35, 8) # Eyes
-        # Goblin (48, 24)
-        pyxel.images[0].rect(48, 24, 24, 24, 0)
-        pyxel.images[0].circ(60, 32, 6, 3); pyxel.images[0].rect(56, 36, 8, 10, 3) # Head & Body
-        pyxel.images[0].rect(50, 38, 4, 2, 3); pyxel.images[0].rect(66, 38, 4, 2, 3) # Arms
-        pyxel.images[0].pset(58, 30, 10); pyxel.images[0].pset(62, 30, 10) # Eyes
-        # Scorpion (72, 24)
-        pyxel.images[0].rect(72, 24, 24, 24, 0)
-        pyxel.images[0].rect(78, 38, 12, 6, 9) # Body
-        pyxel.images[0].line(84, 38, 84, 30, 9); pyxel.images[0].line(84, 30, 88, 30, 8) # Tail
-        pyxel.images[0].rect(74, 36, 4, 4, 8); pyxel.images[0].rect(90, 36, 4, 4, 8) # Pincers
-        # Cactus (96, 24)
-        pyxel.images[0].rect(96, 24, 24, 24, 0)
-        pyxel.images[0].rect(106, 30, 4, 16, 3) # Trunk
-        pyxel.images[0].rect(100, 36, 6, 2, 3); pyxel.images[0].rect(110, 34, 6, 2, 3) # Arms
-        # FireSpirit (120, 24)
-        pyxel.images[0].rect(120, 24, 24, 24, 0)
-        pyxel.images[0].circ(132, 38, 6, 8); pyxel.images[0].tri(126, 38, 132, 26, 138, 38, 10) # Flame
-        # LavaGolem (144, 24)
-        pyxel.images[0].rect(144, 24, 24, 24, 0)
-        pyxel.images[0].rect(148, 28, 16, 16, 2); pyxel.images[0].rect(152, 32, 8, 8, 8) # Rock & Core
-        # RedDragon (168, 24)
-        pyxel.images[0].rect(168, 24, 24, 24, 0)
-        pyxel.images[0].rect(172, 34, 16, 10, 8); pyxel.images[0].tri(168, 28, 172, 34, 168, 40, 8) # Body & Head
-        pyxel.images[0].line(180, 34, 175, 26, 10); pyxel.images[0].line(184, 34, 189, 26, 10) # Horns
-        # Yeti (192, 24)
-        pyxel.images[0].rect(192, 24, 24, 24, 0)
-        pyxel.images[0].circ(204, 36, 9, 7); pyxel.images[0].pset(200, 34, 0); pyxel.images[0].pset(208, 34, 0) # White Fur
-        # IceWolf (216, 24)
-        pyxel.images[0].rect(216, 24, 24, 24, 0)
-        pyxel.images[0].rect(220, 36, 14, 8, 12); pyxel.images[0].tri(228, 36, 234, 28, 240, 36, 12) # Fur & Head
-        # SnowGhost (240, 24)
-        pyxel.images[0].rect(240, 24, 24, 24, 0)
-        pyxel.images[0].circ(252, 36, 8, 13); pyxel.images[0].pset(248, 34, 12); pyxel.images[0].pset(256, 34, 12) # Ghost
+        # 1: Up (Back) - No eyes
+        pyxel.images[0].rect(8, 8, 8, 8, 0)
+        pyxel.images[0].rect(10, 9, 4, 3, 15) # Head (White)
+        pyxel.images[0].rect(10, 12, 4, 4, 8) # Body (Red)
+        # Clear any eyes (pset color 15)
+        pyxel.images[0].pset(10, 10, 15); pyxel.images[0].pset(12, 10, 15)
+        
+        # 2: Left (Side) - One blue eye (left)
+        pyxel.images[0].rect(16, 8, 8, 8, 0)
+        pyxel.images[0].rect(18, 9, 4, 3, 15) # Face
+        pyxel.images[0].rect(18, 12, 4, 4, 8) # Body
+        pyxel.images[0].pset(18, 10, 12) # Leading blue eye
+        
+        # 3: Right (Side) - One blue eye (right)
+        pyxel.images[0].rect(24, 8, 8, 8, 0)
+        pyxel.images[0].rect(26, 9, 4, 3, 15) # Face
+        pyxel.images[0].rect(26, 12, 4, 4, 8) # Body
+        pyxel.images[0].pset(29, 10, 12) # Leading blue eye
 
-        # DEMON LORD (Bank 1, 64, 0) - Huge 32x32 Boss
+        # NPC Graphics (8x8) - 4 Directions in Bank 0, Y=40 (Moved again to be safe)
+        # Body Color: Blue=12, Face Color: White=15 (Head stays white)
+        
+        # 0: Down (Front) - Two blue eyes
+        pyxel.images[0].rect(0, 40, 8, 8, 0)
+        pyxel.images[0].rect(2, 41, 4, 3, 15) # Head (White)
+        pyxel.images[0].rect(2, 44, 4, 4, 12) # Body (Blue)
+        pyxel.images[0].pset(2, 42, 12); pyxel.images[0].pset(4, 42, 12) # Two blue eyes
+        
+        # 1: Up (Back) - No eyes
+        pyxel.images[0].rect(8, 40, 8, 8, 0)
+        pyxel.images[0].rect(10, 41, 4, 3, 15) # Head (White)
+        pyxel.images[0].rect(10, 44, 4, 4, 12) # Body (Blue)
+        # FORCE CLEAR any eyes
+        pyxel.images[0].pset(10, 42, 15); pyxel.images[0].pset(12, 42, 15)
+        
+        # 2: Left (Side) - One blue eye (left edge)
+        pyxel.images[0].rect(16, 40, 8, 8, 0)
+        pyxel.images[0].rect(18, 41, 4, 3, 15) # Face (White)
+        pyxel.images[0].rect(18, 44, 4, 4, 12) # Body (Blue)
+        pyxel.images[0].pset(18, 42, 12) # Leading eye
+        
+        # 3: Right (Side) - One blue eye (right edge)
+        pyxel.images[0].rect(24, 40, 8, 8, 0)
+        pyxel.images[0].rect(26, 41, 4, 3, 15) # Face (White)
+        pyxel.images[0].rect(26, 44, 4, 4, 12) # Body (Blue)
+        pyxel.images[0].pset(29, 42, 12) # Leading eye
+        
+        # Monsters (Start at Y=16 in Image Bank 0) - DEFINING AT Y=16 TO AVOID OVERLAP
+        # Slime (0, 16)
+        pyxel.images[0].rect(0, 16, 16, 16, 0)
+        pyxel.images[0].circ(8, 28, 5, 12); pyxel.images[0].rect(3, 28, 10, 4, 12)
+        pyxel.images[0].pset(6, 27, 7); pyxel.images[0].pset(10, 27, 7)
+        # Bat (16, 16)
+        pyxel.images[0].rect(16, 16, 16, 16, 0)
+        pyxel.images[0].circ(24, 24, 3, 13)
+        pyxel.images[0].line(18, 20, 24, 24, 5); pyxel.images[0].line(30, 20, 24, 24, 5)
+        # Goblin (32, 16)
+        pyxel.images[0].rect(32, 16, 16, 16, 0)
+        pyxel.images[0].circ(40, 22, 4, 3); pyxel.images[0].rect(38, 26, 4, 6, 3)
+        pyxel.images[0].pset(38, 21, 10); pyxel.images[0].pset(42, 21, 10)
+        # Scorpion (48, 16)
+        pyxel.images[0].rect(48, 16, 16, 16, 0)
+        pyxel.images[0].rect(52, 26, 8, 4, 9)
+        pyxel.images[0].line(56, 26, 56, 18, 9); pyxel.images[0].pset(58, 18, 8)
+        # Cactus (64, 16)
+        pyxel.images[0].rect(64, 16, 16, 16, 0)
+        pyxel.images[0].rect(70, 20, 4, 12, 3)
+        pyxel.images[0].rect(66, 24, 4, 2, 3); pyxel.images[0].rect(74, 22, 4, 2, 3)
+        # FireSpirit (80, 16)
+        pyxel.images[0].rect(80, 16, 16, 16, 0)
+        pyxel.images[0].circ(88, 26, 4, 8); pyxel.images[0].tri(84, 26, 88, 18, 92, 26, 10)
+        # LavaGolem (96, 16)
+        pyxel.images[0].rect(96, 16, 16, 16, 0)
+        pyxel.images[0].rect(100, 20, 8, 8, 2); pyxel.images[0].rect(102, 22, 4, 4, 8)
+        # RedDragon (112, 16)
+        pyxel.images[0].rect(112, 16, 16, 16, 0)
+        pyxel.images[0].rect(116, 24, 8, 6, 8); pyxel.images[0].tri(112, 20, 116, 24, 112, 28, 8)
+        # Yeti (128, 16)
+        pyxel.images[0].rect(128, 16, 16, 16, 0)
+        pyxel.images[0].circ(136, 24, 6, 7); pyxel.images[0].pset(134, 23, 0); pyxel.images[0].pset(138, 23, 0)
+        # IceWolf (144, 16)
+        pyxel.images[0].rect(144, 16, 16, 16, 0)
+        pyxel.images[0].rect(148, 24, 8, 6, 12); pyxel.images[0].tri(154, 24, 158, 20, 158, 28, 12)
+        # SnowGhost (160, 16)
+        pyxel.images[0].rect(160, 16, 16, 16, 0)
+        pyxel.images[0].circ(168, 24, 5, 13); pyxel.images[0].pset(166, 22, 12); pyxel.images[0].pset(170, 22, 12)
+
+        # DEMON LORD (Bank 1, 64, 0)
         pyxel.images[1].rect(64, 0, 32, 32, 0)
-        pyxel.images[1].rect(70, 10, 20, 20, 2) # Dark body
-        pyxel.images[1].tri(64, 0, 75, 15, 64, 32, 8) # Left Wing
-        pyxel.images[1].tri(96, 0, 85, 15, 96, 32, 8) # Right Wing
-        pyxel.images[1].rect(76, 15, 3, 3, 10); pyxel.images[1].rect(82, 15, 3, 3, 10) # Glowing eyes
-        pyxel.images[1].rect(78, 22, 5, 2, 8) # Mouth
+        pyxel.images[1].rect(70, 10, 20, 20, 2)
+        pyxel.images[1].tri(64, 0, 75, 15, 64, 32, 8)
+        pyxel.images[1].tri(96, 0, 85, 15, 96, 32, 8)
+        pyxel.images[1].rect(76, 15, 3, 3, 10); pyxel.images[1].rect(82, 15, 3, 3, 10)
+        pyxel.images[1].rect(78, 22, 5, 2, 8)
+
 
 
 
@@ -515,11 +590,22 @@ class App:
         pyxel.images[1].rect(54, 8, 2, 2, 0) # Black hole in G (at line 8)
         pyxel.images[1].rect(54, 9, 2, 2, 0) # Black hole in G (at line 9)
 
+        # Sound Effects (SFX)
+        # 0: Walk
+        pyxel.sounds[0].set("a1", "p", "7", "v", 3)
+        # 1: Confirm/Select
+        pyxel.sounds[1].set("c3", "p", "7", "n", 5)
+        # 2: Hit
+        pyxel.sounds[2].set("c1", "n", "7", "v", 8)
+        # 3: Magic
+        pyxel.sounds[3].set("e3g3c4", "s", "7", "v", 15)
+        # 4: Treasure
+        pyxel.sounds[4].set("c3e3g3c4", "p", "7", "v", 20)
+
     def is_passable(self, tx, ty, m_type="field"):
         if m_type == "field":
             if tx < 0 or tx >= MAP_WIDTH or ty < 0 or ty >= MAP_HEIGHT: return False
             # Get tile from Tilemap 0
-            # pget returns (u, v) in tile units
             u, v = pyxel.tilemaps[0].pget(tx, ty)
             return u not in (TILE_MOUNTAIN, TILE_WATER) or u == TILE_BRIDGE or u == TILE_BOSS
         elif m_type == "town":
@@ -528,7 +614,7 @@ class App:
             return u != TILE_WALL
 
     def start_boss_battle(self):
-        self.current_monster = Monster("DEMON LORD", 500, 40, 30, 0, 0)
+        self.current_monster = Monster("DEMON LORD", 500, 40, 30, 0, 0, "IMG_4318.PNG")
         self.is_boss_battle = True
         self.state = STATE_BATTLE
         self.battle_phase = 0
@@ -537,6 +623,7 @@ class App:
         self.active_character_idx = 0
         self.menu_mode = "main"
         self.battle_cursor = 0
+        self.load_monster_image(self.current_monster)
 
     def trigger_random_encounter(self):
         # Get current tile from Tilemap 0
@@ -545,26 +632,26 @@ class App:
         
         if random.random() < 0.05:
             monsters = [
-                Monster("Slime", 15, 7, 2, 5, 10),
-                Monster("Bat", 18, 9, 3, 8, 15),
-                Monster("Goblin", 25, 12, 5, 12, 25)
+                Monster("Slime", 15, 7, 2, 5, 10, "IMG_4317.PNG"),
+                Monster("Bat", 18, 9, 3, 8, 15, "IMG_4319.PNG"),
+                Monster("Goblin", 25, 12, 5, 12, 25, "IMG_4320.PNG")
             ]
             
             # Area specific monsters
             if tile == TILE_SAND:
-                monsters.append(Monster("Scorpion", 30, 15, 8, 20, 40))
-                monsters.append(Monster("Cactus", 20, 10, 15, 15, 30))
+                monsters.append(Monster("Scorpion", 30, 15, 8, 20, 40, "IMG_4321.PNG"))
+                monsters.append(Monster("Cactus", 20, 10, 15, 15, 30, "IMG_4323.PNG"))
             elif tile == TILE_LAVA:
                 monsters = [
-                    Monster("FireSpirit", 40, 18, 10, 30, 50),
-                    Monster("LavaGolem", 60, 22, 20, 50, 100),
-                    Monster("RedDragon", 100, 30, 25, 200, 500)
+                    Monster("FireSpirit", 40, 18, 10, 30, 50, "IMG_4325.PNG"),
+                    Monster("LavaGolem", 60, 22, 20, 50, 100, "IMG_4326.PNG"),
+                    Monster("RedDragon", 100, 30, 25, 200, 500, "IMG_4327.PNG")
                 ]
             elif tile == TILE_SNOW:
                 monsters = [
-                    Monster("Yeti", 45, 20, 12, 40, 60),
-                    Monster("IceWolf", 35, 15, 8, 25, 35),
-                    Monster("SnowGhost", 25, 12, 30, 35, 45)
+                    Monster("Yeti", 45, 20, 12, 40, 60, "IMG_4328.PNG"),
+                    Monster("IceWolf", 35, 15, 8, 25, 35, "IMG_4329.PNG"),
+                    Monster("SnowGhost", 25, 12, 30, 35, 45, "IMG_4330.PNG")
                 ]
 
             self.current_monster = random.choice(monsters)
@@ -575,16 +662,70 @@ class App:
             self.active_character_idx = 0
             self.menu_mode = "main"
             self.battle_cursor = 0
+            self.load_monster_image(self.current_monster)
 
+    def load_monster_image(self, monster):
+        if not monster or not monster.img_file:
+            return
+        import os
+        base_path = os.path.dirname(__file__)
+        img_path = os.path.join(base_path, "img32", monster.img_file)
+        try:
+            if os.path.exists(img_path):
+                # Load the monster image into Bank 1 at (160, 0)
+                # This leaves space for the player at (128, 0)
+                pyxel.images[1].load(160, 0, img_path)
+                # DEBUG: Print success
+                # print(f"Loaded monster image: {img_path}")
+            else:
+                print(f"Warning: {img_path} not found.")
+        except Exception as e:
+            print(f"Warning: Could not load {monster.img_file}: {e}")
+
+    def play_bgm(self, file_name):
+        import os
+        base_path = os.path.dirname(__file__)
+        # Search in multiple potential locations
+        paths = [
+            os.path.join(base_path, "BGM", file_name),
+            os.path.join(os.path.dirname(base_path), "noteuse", "BGM", file_name)
+        ]
+        for path in paths:
+            try:
+                if os.path.exists(path):
+                    # Pyxel 2.0+ supports PCM playback for .mp3/.wav
+                    # Sound channel 63 is often used for this in Pyxel
+                    pyxel.sounds[63].pcm(path)
+                    pyxel.play(0, 63, loop=True)
+                    return
+            except Exception as e:
+                print(f"Failed to play BGM {file_name} from {path}: {e}")
 
     def update(self):
+        # Update BGM on state change
+        if not hasattr(self, 'last_state'):
+            self.last_state = None
+        
+        if self.state != self.last_state:
+            if self.state == STATE_TITLE:
+                self.play_bgm("ComfyUI_00001_.mp3")
+            elif self.state in [STATE_FIELD, STATE_TOWN]:
+                self.play_bgm("ComfyUI_00002_.mp3")
+            elif self.state == STATE_BATTLE:
+                self.play_bgm("ComfyUI_00003_.mp3")
+            elif self.state == STATE_GAMECLEAR:
+                self.play_bgm("ComfyUI_00004_.mp3")
+            self.last_state = self.state
+
         # Update acquisition timer
         if self.acquisition_timer > 0:
             self.acquisition_timer -= 1
 
         if self.state == STATE_TITLE:
             self.title_frame += 1
-            if pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.KEY_Z):
+            # Check for Enter, Z key, or any gamepad button/input to start
+            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
+                pyxel.play(3, 1)
                 self.state = STATE_FIELD
                 self.title_frame = 0
         elif self.state == STATE_FIELD:
@@ -595,14 +736,20 @@ class App:
             self.update_menu()
         elif self.state == STATE_BATTLE:
             self.update_battle()
+            
+        if self.shake_amount > 0:
+            self.shake_amount -= 1
+        if self.flash_timer > 0:
+            self.flash_timer -= 1
+
 
     def update_field(self):
         if self.is_dialog_active:
-            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                 self.is_dialog_active = False
             return
 
-        if pyxel.btnp(pyxel.KEY_X) or pyxel.btnp(pyxel.KEY_ESCAPE):
+        if pyxel.btnp(pyxel.KEY_X) or pyxel.btnp(pyxel.KEY_ESCAPE) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B):
             self.state = STATE_MENU
             self.menu_mode = "main"
             self.menu_cursor = 0
@@ -611,20 +758,24 @@ class App:
         moved = False
         nx, ny = self.px, self.py
 
-        if pyxel.btnp(pyxel.KEY_UP): 
+        if pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP): 
             ny -= 1
             self.facing = 1
-        elif pyxel.btnp(pyxel.KEY_DOWN): 
+            moved = True
+        elif pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN): 
             ny += 1
             self.facing = 0
-        elif pyxel.btnp(pyxel.KEY_LEFT): 
+            moved = True
+        elif pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT): 
             nx -= 1
             self.facing = 2
-        elif pyxel.btnp(pyxel.KEY_RIGHT): 
+            moved = True
+        elif pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT): 
             nx += 1
             self.facing = 3
+            moved = True
 
-        if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+        if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
             # Interact with objects in front of the player
             ix, iy = self.px, self.py
             if self.facing == 0: iy += 1
@@ -635,6 +786,7 @@ class App:
             for c in self.chests:
                 if c.x == ix and c.y == iy and not c.opened:
                     c.opened = True
+                    pyxel.play(3, 4)
                     if c.item:
                         self.add_item(Item(c.item.name, c.item.effect_type, c.item.power, c.item.amount))
                         self.show_dialog([f"Found {c.item.name}!"])
@@ -644,106 +796,110 @@ class App:
                         self.show_dialog([f"Found {c.gold} GOLD!"])
                     return
 
-        if (nx != self.px or ny != self.py) and self.is_passable(nx, ny, "field"):
-            # Check collision with chests on field
-            chest_blocked = False
-            for c in self.chests:
-                if c.x == nx and c.y == ny:
-                    chest_blocked = True
-                    break
-            
-            if not chest_blocked:
-                self.px, self.py = nx, ny
-                moved = True
+        # Movement with 32x32 TILE_SIZE logic
+        if moved and pyxel.frame_count % 4 == 0:
+            pyxel.play(3, 0)
+            if self.is_passable(nx, ny, "field"):
+                # Check collision with chests on field
+                chest_blocked = False
+                for c in self.chests:
+                    if c.x == nx and c.y == ny:
+                        chest_blocked = True
+                        break
+                
+                if not chest_blocked:
+                    self.px, self.py = nx, ny
+                    
+                    u, v = pyxel.tilemaps[0].pget(self.px, self.py)
+                    tile = u
+                    if tile == TILE_LAVA:
+                        for c in self.party:
+                            if c.hp > 0:
+                                c.hp = max(1, c.hp - 1)
+                    
+                    if tile == TILE_BOSS:
+                        self.start_boss_battle()
+                        return
 
-        if moved:
-            u, v = pyxel.tilemaps[0].pget(self.px, self.py)
-            tile = u
-            if tile == TILE_LAVA:
-                for c in self.party:
-                    if c.hp > 0:
-                        c.hp = max(1, c.hp - 1) # Reduce 1 HP per step on lava (min 1)
-            
-            # Start Boss Battle if touching boss tile
-            if tile == TILE_BOSS:
-                self.start_boss_battle()
-                return # Don't trigger random encounter on boss tile
+                    if tile == TILE_CAVE:
+                        # Cave Warp Logic
+                        # Cave A (Mainland): (53, 97) -> Cave B (Boss Island): (53, 101)
+                        if self.px == 53 and self.py == 97:
+                            self.px, self.py = 53, 101
+                            self.show_dialog(["Traversed the dark cave..."])
+                        elif self.px == 53 and self.py == 101:
+                            self.px, self.py = 53, 97
+                            self.show_dialog(["Returned to the mainland."])
+                        return
 
-            if tile == TILE_CASTLE: # Castle
-                for c in self.party:
-                    c.hp = c.max_hp
-                    c.mp = c.max_mp
-            elif tile == TILE_TOWN: # Town
-                self.save_px, self.save_py = self.px, self.py
-                self.state = STATE_TOWN
-                self.tx = 7
-                self.ty = 14
-            else:
-                self.trigger_random_encounter()
+                    if tile == TILE_CASTLE:
+                        for c in self.party:
+                            c.hp = c.max_hp
+                            c.mp = c.max_mp
+                    elif tile == TILE_TOWN:
+                        self.save_px, self.save_py = self.px, self.py
+                        self.state = STATE_TOWN
+                        self.tx = 7
+                        self.ty = 14
+                    else:
+                        self.trigger_random_encounter()
 
+        # Camera centered on 8x8 tiles
         self.camera_x = self.px * 8 - pyxel.width // 2
         self.camera_y = self.py * 8 - pyxel.height // 2
 
 
     def update_town(self):
         if self.is_dialog_active:
-            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                 self.is_dialog_active = False
             return
 
-        # Update NPCs (moving logic)
         for n in self.npcs:
             n.update(self)
 
-        if pyxel.btnp(pyxel.KEY_X) or pyxel.btnp(pyxel.KEY_ESCAPE):
+        if pyxel.btnp(pyxel.KEY_X) or pyxel.btnp(pyxel.KEY_ESCAPE) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B):
             self.state = STATE_MENU
             self.menu_mode = "main"
             self.menu_cursor = 0
             return
             
         nx, ny = self.tx, self.ty
-        if pyxel.btnp(pyxel.KEY_UP): 
+        moved = False
+        if pyxel.btn(pyxel.KEY_UP) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_UP): 
             ny -= 1
             self.facing = 1
-        elif pyxel.btnp(pyxel.KEY_DOWN): 
+            moved = True
+        elif pyxel.btn(pyxel.KEY_DOWN) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN): 
             ny += 1
             self.facing = 0
-        elif pyxel.btnp(pyxel.KEY_LEFT): 
+            moved = True
+        elif pyxel.btn(pyxel.KEY_LEFT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_LEFT): 
             nx -= 1
             self.facing = 2
-        elif pyxel.btnp(pyxel.KEY_RIGHT): 
+            moved = True
+        elif pyxel.btn(pyxel.KEY_RIGHT) or pyxel.btn(pyxel.GAMEPAD1_BUTTON_DPAD_RIGHT): 
             nx += 1
             self.facing = 3
+            moved = True
 
-        if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
-            # Coordinates for 1 and 2 tiles in front
+        if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
             ix1, iy1 = self.tx, self.ty
             ix2, iy2 = self.tx, self.ty
+            if self.facing == 0: iy1 += 1; iy2 += 2
+            elif self.facing == 1: iy1 -= 1; iy2 -= 2
+            elif self.facing == 2: ix1 -= 1; ix2 -= 2
+            elif self.facing == 3: ix1 += 1; ix2 += 2
             
-            if self.facing == 0: # Down
-                iy1 += 1
-                iy2 += 2
-            elif self.facing == 1: # Up
-                iy1 -= 1
-                iy2 -= 2
-            elif self.facing == 2: # Left
-                ix1 -= 1
-                ix2 -= 2
-            elif self.facing == 3: # Right
-                ix1 += 1
-                ix2 += 2
-            
-            # Interact with NPCs (within 2 tiles in front, even through walls)
             for n in self.npcs:
                 if (n.x == ix1 and n.y == iy1) or (n.x == ix2 and n.y == iy2):
                     self.show_dialog(n.messages, n)
                     return
             
-            # Interact with town chests (1 tile in front)
-            # Re-using ix1, iy1 for clarity
             for c in self.town_chests:
                 if c.x == ix1 and c.y == iy1 and not c.opened:
                     c.opened = True
+                    pyxel.play(3, 4)
                     if c.item:
                         self.add_item(Item(c.item.name, c.item.effect_type, c.item.power, c.item.amount))
                         self.show_dialog([f"Found {c.item.name}!"])
@@ -753,32 +909,27 @@ class App:
                         self.show_dialog([f"Found {c.gold} GOLD!"])
                     return
 
-        if ny >= TOWN_HEIGHT: # Exit town at bottom
-            self.state = STATE_FIELD
-            self.px, self.py = self.save_px, self.save_py
-            # move player down slightly so they don't immediately re-enter
-            if self.is_passable(self.px, self.py+1, "field"): self.py += 1
-            return
+        if moved and pyxel.frame_count % 3 == 0:
+            pyxel.play(3, 0)
+            if ny >= TOWN_HEIGHT:
+                self.state = STATE_FIELD
+                self.px, self.py = self.save_px, self.save_py
+                if self.is_passable(self.px, self.py+1, "field"): self.py += 1
+                return
 
-        if (nx != self.tx or ny != self.ty) and self.is_passable(nx, ny, "town"):
-            # Check if moving into an NPC
-            occupied = False
-            for n in self.npcs:
-                if n.x == nx and n.y == ny:
-                    occupied = True
-                    break
-            
-            # Check if moving into a town chest
-            for c in self.town_chests:
-                if c.x == nx and c.y == ny:
-                    occupied = True
-                    break
-            
-            if not occupied:
-                self.tx, self.ty = nx, ny
+            if (nx != self.tx or ny != self.ty) and self.is_passable(nx, ny, "town"):
+                occupied = False
+                for n in self.npcs:
+                    if n.x == nx and n.y == ny: occupied = True; break
+                for c in self.town_chests:
+                    if c.x == nx and c.y == ny: occupied = True; break
+                if not occupied:
+                    self.tx, self.ty = nx, ny
 
+        # Camera centered on 8x8 tiles
         self.camera_x = self.tx * 8 - pyxel.width // 2
         self.camera_y = self.ty * 8 - pyxel.height // 2
+
 
     def add_item(self, item):
         for itm in self.inventory:
@@ -800,19 +951,14 @@ class App:
 
     def update_menu(self):
         if self.menu_mode == "main":
-            if pyxel.btnp(pyxel.KEY_X) or pyxel.btnp(pyxel.KEY_ESCAPE):
-                if self.state == STATE_MENU:
-                    # Determine where to return
-                    # We can check current tile to see if we were in town
-                    # But simpler is to check current state transition
-                    pass
+            if pyxel.btnp(pyxel.KEY_X) or pyxel.btnp(pyxel.KEY_ESCAPE) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B):
                 u, v = pyxel.tilemaps[0].pget(self.px, self.py)
                 self.state = STATE_FIELD if u != TILE_TOWN else STATE_TOWN
                 return
-            if pyxel.btnp(pyxel.KEY_UP): self.menu_cursor = (self.menu_cursor - 1) % 4
-            elif pyxel.btnp(pyxel.KEY_DOWN): self.menu_cursor = (self.menu_cursor + 1) % 4
+            if pyxel.btnp(pyxel.KEY_UP) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_UP): self.menu_cursor = (self.menu_cursor - 1) % 4
+            elif pyxel.btnp(pyxel.KEY_DOWN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN): self.menu_cursor = (self.menu_cursor + 1) % 4
                 
-            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                 if self.menu_cursor == 1: # Items
                     self.menu_mode = "items"
                     self.sub_cursor = 0
@@ -825,36 +971,36 @@ class App:
 
                     
         elif self.menu_mode == "items":
-            if pyxel.btnp(pyxel.KEY_X): self.menu_mode = "main"
+            if pyxel.btnp(pyxel.KEY_X) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B): self.menu_mode = "main"
             
             valid_items = [itm for itm in self.inventory if itm.amount > 0]
             if not valid_items: return
             
-            if pyxel.btnp(pyxel.KEY_UP): self.sub_cursor = (self.sub_cursor - 1) % len(valid_items)
-            elif pyxel.btnp(pyxel.KEY_DOWN): self.sub_cursor = (self.sub_cursor + 1) % len(valid_items)
+            if pyxel.btnp(pyxel.KEY_UP) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_UP): self.sub_cursor = (self.sub_cursor - 1) % len(valid_items)
+            elif pyxel.btnp(pyxel.KEY_DOWN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN): self.sub_cursor = (self.sub_cursor + 1) % len(valid_items)
             
-            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                 self.selected_item_or_spell = valid_items[self.sub_cursor]
                 if self.selected_item_or_spell.effect_type in ["heal_hp", "heal_mp"]:
                     self.menu_mode = "target"
                     self.target_cursor = 0
                     
         elif self.menu_mode == "magic_char":
-            if pyxel.btnp(pyxel.KEY_X): self.menu_mode = "main"
-            if pyxel.btnp(pyxel.KEY_UP): self.sub_cursor = (self.sub_cursor - 1) % len(self.party)
-            elif pyxel.btnp(pyxel.KEY_DOWN): self.sub_cursor = (self.sub_cursor + 1) % len(self.party)
-            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+            if pyxel.btnp(pyxel.KEY_X) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B): self.menu_mode = "main"
+            if pyxel.btnp(pyxel.KEY_UP) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_UP): self.sub_cursor = (self.sub_cursor - 1) % len(self.party)
+            elif pyxel.btnp(pyxel.KEY_DOWN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN): self.sub_cursor = (self.sub_cursor + 1) % len(self.party)
+            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                 self.active_char = self.party[self.sub_cursor]
                 if self.active_char and self.active_char.spells:
                     self.menu_mode = "magic"
                     self.sub_cursor = 0
 
         elif self.menu_mode == "magic":
-            if pyxel.btnp(pyxel.KEY_X): self.menu_mode = "magic_char"
+            if pyxel.btnp(pyxel.KEY_X) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B): self.menu_mode = "magic_char"
             if self.active_char and self.active_char.spells:
-                if pyxel.btnp(pyxel.KEY_UP): self.sub_cursor = (self.sub_cursor - 1) % len(self.active_char.spells)
-                elif pyxel.btnp(pyxel.KEY_DOWN): self.sub_cursor = (self.sub_cursor + 1) % len(self.active_char.spells)
-                if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+                if pyxel.btnp(pyxel.KEY_UP) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_UP): self.sub_cursor = (self.sub_cursor - 1) % len(self.active_char.spells)
+                elif pyxel.btnp(pyxel.KEY_DOWN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN): self.sub_cursor = (self.sub_cursor + 1) % len(self.active_char.spells)
+                if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                     spl = self.active_char.spells[self.sub_cursor]
                     if spl.effect_type == 'heal' and self.active_char.mp >= spl.mp_cost:
                         self.selected_item_or_spell = spl
@@ -862,11 +1008,11 @@ class App:
                         self.target_cursor = 0
 
         elif self.menu_mode == "target":
-            if pyxel.btnp(pyxel.KEY_X): self.menu_mode = "main"
-            if pyxel.btnp(pyxel.KEY_UP): self.target_cursor = (self.target_cursor - 1) % len(self.party)
-            elif pyxel.btnp(pyxel.KEY_DOWN): self.target_cursor = (self.target_cursor + 1) % len(self.party)
+            if pyxel.btnp(pyxel.KEY_X) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B): self.menu_mode = "main"
+            if pyxel.btnp(pyxel.KEY_UP) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_UP): self.target_cursor = (self.target_cursor - 1) % len(self.party)
+            elif pyxel.btnp(pyxel.KEY_DOWN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN): self.target_cursor = (self.target_cursor + 1) % len(self.party)
             
-            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                 target = self.party[self.target_cursor]
                 eff = self.selected_item_or_spell
                 if isinstance(eff, Item):
@@ -915,20 +1061,28 @@ class App:
                 dmg = max(1, char.attack - self.current_monster.defense // 2 + random.randint(-1, 1))
                 self.current_monster.hp -= dmg
                 self.battle_messages.append(f"{char.name} attacks! {dmg} dmg.")
+                self.shake_amount = 10
+                pyxel.play(3, 2)
             elif act == "Defend":
                 self.battle_messages.append(f"{char.name} is defending.")
+                pyxel.play(3, 1)
             elif act == "Magic":
                 if isinstance(info, tuple): # Heal magic
                     spl, target = info
                     char.mp -= spl.mp_cost
                     target.hp = min(target.max_hp, target.hp + spl.power)
                     self.battle_messages.append(f"{char.name} cast {spl.name} on {target.name}!")
+                    self.flash_timer = 5
+                    pyxel.play(3, 3)
                 else: # Attack magic
                     spl = info
                     char.mp -= spl.mp_cost
                     dmg = spl.power + random.randint(0, 5)
                     self.current_monster.hp -= dmg
                     self.battle_messages.append(f"{char.name} cast {spl.name}! {dmg} dmg.")
+                    self.shake_amount = 15
+                    self.flash_timer = 10
+                    pyxel.play(3, 3)
             elif act == "Item":
                 itm, target = info
                 if itm.amount > 0:
@@ -938,6 +1092,8 @@ class App:
                     elif itm.effect_type == "heal_mp":
                         target.mp = min(target.max_mp, target.mp + itm.power)
                     self.battle_messages.append(f"Used {itm.name} on {target.name}.")
+                    self.flash_timer = 5
+                    pyxel.play(3, 1)
 
         # Monster attacks
         if self.current_monster and self.current_monster.hp > 0:
@@ -953,6 +1109,8 @@ class App:
                 target.hp -= dmg
                 if target.hp < 0: target.hp = 0
                 self.battle_messages.append(f"{self.current_monster.name} hits {target.name} for {dmg} dmg!")
+                self.flash_timer = 15
+                pyxel.play(3, 2)
                 if target.hp == 0:
                     self.battle_messages.append(f"{target.name} fell!")
         elif self.current_monster:
@@ -995,7 +1153,7 @@ class App:
             self.battle_messages = self.battle_messages[-4:]
 
         if self.battle_phase == 0:
-            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                 self.battle_phase = 1
                 self.active_character_idx = 0
                 self.get_next_alive_character()
@@ -1006,10 +1164,10 @@ class App:
             char = self.party[self.active_character_idx]
             
             if self.menu_mode == "main":
-                if pyxel.btnp(pyxel.KEY_UP): self.battle_cursor = (self.battle_cursor - 1) % 5
-                elif pyxel.btnp(pyxel.KEY_DOWN): self.battle_cursor = (self.battle_cursor + 1) % 5
+                if pyxel.btnp(pyxel.KEY_UP) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_UP): self.battle_cursor = (self.battle_cursor - 1) % 5
+                elif pyxel.btnp(pyxel.KEY_DOWN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN): self.battle_cursor = (self.battle_cursor + 1) % 5
                 
-                if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+                if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                     if self.battle_cursor == 0: # Attack
                         self.push_command(char, "Attack", None)
                     elif self.battle_cursor == 1: # Defend
@@ -1023,7 +1181,7 @@ class App:
                     elif self.battle_cursor == 4: # Flee
                         self.push_command(char, "Flee", None)
                         
-                elif pyxel.btnp(pyxel.KEY_X):
+                elif pyxel.btnp(pyxel.KEY_X) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B):
                     if self.active_character_idx > 0:
                         self.active_character_idx -= 1
                         while self.party[self.active_character_idx].hp <= 0 and self.active_character_idx > 0:
@@ -1031,13 +1189,13 @@ class App:
                         self.character_commands.pop()
 
             elif self.menu_mode == "magic":
-                if pyxel.btnp(pyxel.KEY_X):
+                if pyxel.btnp(pyxel.KEY_X) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B):
                     self.menu_mode = "main"
-                    return # Xキーで確実に戻る
+                    return
                 if char.spells:
-                    if pyxel.btnp(pyxel.KEY_UP): self.sub_cursor = (self.sub_cursor - 1) % len(char.spells)
-                    elif pyxel.btnp(pyxel.KEY_DOWN): self.sub_cursor = (self.sub_cursor + 1) % len(char.spells)
-                    if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+                    if pyxel.btnp(pyxel.KEY_UP) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_UP): self.sub_cursor = (self.sub_cursor - 1) % len(char.spells)
+                    elif pyxel.btnp(pyxel.KEY_DOWN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN): self.sub_cursor = (self.sub_cursor + 1) % len(char.spells)
+                    if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                         spl = char.spells[self.sub_cursor]
                         if char.mp >= spl.mp_cost:
                             if spl.effect_type == "damage":
@@ -1048,32 +1206,32 @@ class App:
                                 self.target_cursor = 0
             
             elif self.menu_mode == "items":
-                if pyxel.btnp(pyxel.KEY_X):
+                if pyxel.btnp(pyxel.KEY_X) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B):
                     self.menu_mode = "main"
                     return
                 valid_items = [itm for itm in self.inventory if itm.amount > 0]
                 if valid_items:
-                    if pyxel.btnp(pyxel.KEY_UP): self.sub_cursor = (self.sub_cursor - 1) % len(valid_items)
-                    elif pyxel.btnp(pyxel.KEY_DOWN): self.sub_cursor = (self.sub_cursor + 1) % len(valid_items)
-                    if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+                    if pyxel.btnp(pyxel.KEY_UP) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_UP): self.sub_cursor = (self.sub_cursor - 1) % len(valid_items)
+                    elif pyxel.btnp(pyxel.KEY_DOWN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN): self.sub_cursor = (self.sub_cursor + 1) % len(valid_items)
+                    if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                         self.selected_item_or_spell = valid_items[self.sub_cursor]
                         self.menu_mode = "target"
                         self.target_cursor = 0
 
             elif self.menu_mode == "target":
-                if pyxel.btnp(pyxel.KEY_X): self.menu_mode = "main"
-                if pyxel.btnp(pyxel.KEY_UP): self.target_cursor = (self.target_cursor - 1) % len(self.party)
-                elif pyxel.btnp(pyxel.KEY_DOWN): self.target_cursor = (self.target_cursor + 1) % len(self.party)
-                if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+                if pyxel.btnp(pyxel.KEY_X) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_B): self.menu_mode = "main"
+                if pyxel.btnp(pyxel.KEY_UP) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_UP): self.target_cursor = (self.target_cursor - 1) % len(self.party)
+                elif pyxel.btnp(pyxel.KEY_DOWN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_DPAD_DOWN): self.target_cursor = (self.target_cursor + 1) % len(self.party)
+                if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                     target = self.party[self.target_cursor]
                     self.push_command(char, "Item" if isinstance(self.selected_item_or_spell, Item) else "Magic", (self.selected_item_or_spell, target))
 
         elif self.battle_phase == 2:
-            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                 pass
                 
         elif self.battle_phase == 3:
-            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN):
+            if pyxel.btnp(pyxel.KEY_Z) or pyxel.btnp(pyxel.KEY_RETURN) or pyxel.btnp(pyxel.GAMEPAD1_BUTTON_A):
                 if self.is_boss_battle:
                     self.state = STATE_GAMECLEAR
                     self.is_boss_battle = False
@@ -1143,9 +1301,9 @@ class App:
                 self.title_frame = 0 # Animation counter for title
                 # Reset party
                 self.party = [
-                    Character("Yusha", 30, 0, 10, 5, 8),
-                    Character("Saru", 25, 15, 7, 4, 10, [SPELL_FIRE]),
-                    Character("Mimi", 18, 25, 4, 3, 12, [SPELL_HEAL])
+                    Character("Zany(Hero)", 30, 0, 10, 5, 8),
+                    Character("Kozu(Mage)", 25, 15, 7, 4, 10, [SPELL_FIRE]),
+                    Character("Luna(Priest)", 18, 25, 4, 3, 12, [SPELL_HEAL])
                 ]
                 self.px, self.py = 20, 10
 
@@ -1164,7 +1322,10 @@ class App:
                 pyxel.blt(c.x*8-self.camera_x, c.y*8-self.camera_y, 0, tile*8, 0, 8, 8, 0)
         elif mode == "town":
             for n in self.npcs:
-                pyxel.blt(n.x*8-self.camera_x, n.y*8-self.camera_y, 0, TILE_NPC*8, 0, 8, 8, 0)
+                # Use NPC-specific 4-direction sprites at Bank 0, Y=40
+                # Body: Blue (12), Head: White (15), Eyes: Blue (12)
+                u = n.facing * 8
+                pyxel.blt(n.x*8-self.camera_x, n.y*8-self.camera_y, 0, u, 40, 8, 8, 0)
             for c in self.town_chests:
                 tile = TILE_CHEST_CLOSED if not c.opened else TILE_CHEST_OPEN
                 pyxel.blt(c.x*8-self.camera_x, c.y*8-self.camera_y, 0, tile*8, 0, 8, 8, 0)
@@ -1199,35 +1360,49 @@ class App:
 
 
     def draw_map(self, map_data, mw, mh, px, py):
-        # FASTEST rendering using Pyxel's tilemap feature
-        # We use tilemap 0 for world and 1 for town
+        # Original 8x8 Tilemap rendering
         tm = 0 if (mw == MAP_WIDTH) else 1
-        
-        # bltm(x, y, tm, u, v, w, h, [colkey])
         pyxel.bltm(0, 0, tm, self.camera_x, self.camera_y, pyxel.width, pyxel.height, 0)
         
-        # Draw player (Always use index 0 horizontally in Bank 0, Y=8)
-        # Previously it was using self.facing * 8, which caused it to disappear when not facing down (0)
-        pyxel.blt(px * 8 - self.camera_x, py * 8 - self.camera_y, 0, 0, 8, 8, 8, 0)
+        # Draw player using the 8x8 sprites based on facing
+        px_screen = px * 8 - self.camera_x
+        py_screen = py * 8 - self.camera_y
+        
+        # Determine u coordinate based on self.facing (0:down, 1:up, 2:left, 3:right)
+        # 0: down (Bank 0, x=0, y=8)
+        # 1: up   (Bank 0, x=8, y=8)
+        # 2: left (Bank 0, x=16, y=8)
+        # 3: right(Bank 0, x=24, y=8)
+        u = self.facing * 8
+        
+        # Draw 8x8 player sprite from Bank 0, Y=8
+        pyxel.blt(px_screen, py_screen, 0, u, 8, 8, 8, 0)
 
     def draw_party_status(self):
-        # Move to bottom of the screen (y=232, height=24)
-        pyxel.rect(0, 232, pyxel.width, 24, 0)
-        pyxel.rectb(0, 232, pyxel.width, 24, 7)
+        # Expanded to 3 lines (y=224, height=32)
+        pyxel.rect(0, 224, pyxel.width, 32, 0)
+        pyxel.rectb(0, 224, pyxel.width, 32, 7)
+        
+        # Draw characters with more spacing to avoid overlap with right stats
+        # Total width 256. 3 characters. Spacing 75px (instead of 80)
         for i, char in enumerate(self.party):
-            x = 4 + i * 80
+            x = 4 + i * 65 # Narrower spacing to make room on the right
             c = 7 if char.hp > 0 else 8
-            pyxel.text(x, 236, f"Lv{char.level} {char.name[:4]}", c)
-            pyxel.text(x, 244, f"H:{char.hp} M:{char.mp}", c)
+            pyxel.text(x, 228, char.name, 10) # Line 1: Name (Gold color)
+            pyxel.text(x, 236, f"LEVEL: {char.level}", c) # Line 2: Level
+            pyxel.text(x, 244, f"H:{char.hp} M:{char.mp}", c) # Line 3: HP/MP
             
             # Draw facing arrow for each character (or just the leader)
-            # Displaying for each character at the bottom right of their status area
-            if i == 0: # Show direction arrow for the party leader
+            if i == 0:
                 arrow = ["v", "^", "<", ">"][self.facing]
                 pyxel.text(x + 50, 244, arrow, 10)
                 
-        # Display current Gold
-        pyxel.text(205, 236, f"G:{self.party[0].gold}", 10)
+        # Right-side stats background for better readability
+        # Gold on top, Coordinates underneath
+        pyxel.text(205, 228, f"G:{self.party[0].gold}", 10)
+        
+        curr_x, curr_y = (self.px, self.py) if self.state in [STATE_FIELD, STATE_MENU] else (self.tx, self.ty)
+        pyxel.text(205, 236, f"X:{curr_x} Y:{curr_y}", 13)
 
     def draw_field_menu(self):
         pyxel.rect(170, 30, 80, 80, 0)
@@ -1265,17 +1440,21 @@ class App:
             pyxel.text(175, 40 + self.target_cursor*10, ">", 10)
 
     def draw_battle(self):
-        pyxel.cls(0)
+        if self.flash_timer > 0:
+            pyxel.cls(7)
+        else:
+            pyxel.cls(0)
+            
+        sx = random.randint(-self.shake_amount, self.shake_amount) if self.shake_amount > 0 else 0
+        sy = random.randint(-self.shake_amount, self.shake_amount) if self.shake_amount > 0 else 0
+        
         if self.current_monster:
-            # Determine monster tile based on name
-            # All monsters now use 24x24 (bank 0, y=24) or 32x32 (bank 1, 64, 0)
+            # Always use programmatic dot art for monsters (defined at Y=16 in Bank 0)
             if self.current_monster.name == "DEMON LORD":
-                # Boss uses 32x32 from Bank 1
-                pyxel.blt(112, 70, 1, 64, 0, 32, 32, 0)
-                # Display HP above the monster (y=60)
-                pyxel.text(100, 60, f"{self.current_monster.name} HP:{self.current_monster.hp}", 8)
+                pyxel.blt(112 + sx, 70 + sy, 1, 64, 0, 32, 32, 0)
+                pyxel.text(100 + sx, 60 + sy, f"{self.current_monster.name} HP:{self.current_monster.hp}", 8)
             else:
-                # Regular monsters use 24x24 from Bank 0, Y=24
+                # Regular monsters use 16x16 area from Bank 0, Y=16
                 idx = 0
                 if self.current_monster.name == "Bat": idx = 1
                 elif self.current_monster.name == "Goblin": idx = 2
@@ -1288,9 +1467,9 @@ class App:
                 elif self.current_monster.name == "IceWolf": idx = 9
                 elif self.current_monster.name == "SnowGhost": idx = 10
                 
-                pyxel.blt(116, 80, 0, idx * 24, 24, 24, 24, 0)
-                # Display HP above the monster (y=70)
-                pyxel.text(110, 70, f"{self.current_monster.name} HP:{self.current_monster.hp}", 8)
+                # Draw monster from bank 0, y=16 (where they are defined in create_graphics)
+                pyxel.blt(120 + sx, 80 + sy, 0, idx * 16, 16, 16, 16, 0)
+                pyxel.text(110 + sx, 70 + sy, f"{self.current_monster.name} HP:{self.current_monster.hp}", 8)
 
 
         pyxel.rect(0, 200, pyxel.width, 56, 0)
