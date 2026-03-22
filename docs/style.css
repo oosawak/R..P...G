@@ -531,6 +531,14 @@ footer {
 }
 
 @media (max-width: 900px) {
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: url('assets/bg.png') center/cover no-repeat;
+        opacity: 0.15;
+        z-index: -1;
+    }
     .hero-grid { grid-template-columns: 1fr; text-align: center; }
     .hero-cta { justify-content: center; }
     .hero-description { margin-inline: auto; }
