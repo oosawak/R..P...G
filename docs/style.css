@@ -111,6 +111,7 @@ nav ul {
     border: none;
     font-family: 'Outfit', sans-serif;
     letter-spacing: 0.02em;
+    touch-action: manipulation;
 }
 
 .btn-sm { padding: 0.5rem 1.25rem; font-size: 0.85rem; }
@@ -257,6 +258,7 @@ nav ul {
     width: 100%;
     height: 200px;
     background: linear-gradient(to bottom, transparent, var(--bg-dark));
+    pointer-events: none;
 }
 
 /* --- Features --- */
@@ -534,4 +536,25 @@ footer {
     .hero-description { margin-inline: auto; }
     .hero-visual { display: none; }
     .footer-content { flex-direction: column; gap: 2rem; text-align: center; }
+
+    /* Header Mobile Adjustments */
+    header {
+        height: auto;
+        padding: 1rem 0;
+    }
+
+    .nav-container {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .nav-link {
+        font-size: 0.8rem;
+    }
 }
